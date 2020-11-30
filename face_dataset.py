@@ -39,7 +39,7 @@ def main():
 	# get command line arguments
 	args = get_args(info)
 
-	output_path = os.path.join('dataset', args['output'])
+	output_path = os.path.join('dataset', args['output'], args['output'])
 
 	# Haar cascade
 	haar_cascade = r'haar_cascade\haarcascade_frontalface_default.xml'

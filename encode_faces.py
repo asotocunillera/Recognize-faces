@@ -70,6 +70,7 @@ def main():
 
 	#Save encodings in a pickle file for future recognition
 	print('Serializing encodings...')
+	if not os.path.isdir('encodings'): os.mkdir('encodings')
 	encoding_path = os.path.join('encodings', f'{args["dataset"]}.pickle')
 	data = {'encodings': known_encodings, 'names': known_names}
 	f = open(encoding_path, "wb")
