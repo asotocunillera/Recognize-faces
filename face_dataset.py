@@ -54,8 +54,9 @@ def main():
 		flag ,frame = cap.read()
 		img = rescale_frame(frame, scale = 0.9)
 		gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-		faces = face_cascade.detectMultiScale(gray, scaleFactor = 1.1, 
-											minNeighbors = 4, minSize= (30,30))
+		faces = face_cascade.detectMultiScale(
+			gray, scaleFactor = 1.1, 
+			minNeighbors = 4, minSize= (30,30))
 
 		for (x,y,w,h) in faces:
 			cv.rectangle(img, (x,y), (x+w,y+h), (255,0,0),2)
@@ -66,7 +67,7 @@ def main():
 		#if 'C' is pressed, save the frame into output directory
 		if key == ord('c'):
 			# if output path does not exist it is created
-			if not os.path.isdir(output_path): os.mkdir(output_path)
+			if not os.path.isdir(output_path): os.makedirs(output_path)
 			
 			f = os.path.join(output_path, f'{str(total).zfill(5)}.png')
 			print(f'Frame {str(total).zfill(5)} saved')
