@@ -3,6 +3,7 @@ import argparse
 import pickle
 import cv2 as cv
 import os
+from face_dataset import rescale_frame
 
 info = {
     'name': 'Image Recognition',
@@ -16,7 +17,9 @@ info = {
 # Argument parser
 def get_args(info):
 
-    parser = argparse.ArgumentParser(description='{desc}'.format(** info))
+    parser = argparse.ArgumentParser(
+        description='{desc}'.format(** info),
+        epilog = '{license}, {email}'.format(** info))
 
     # define argument validation
     parser.add_argument('-e','--encodings', required = True,
@@ -33,12 +36,14 @@ def main():
     global info
     args = get_args(info)
 
-    print('Loading faces...')
+    print('Loading encoding faces...')
     encoded_path = os.path.join('encodings', args['encodings'])
     pickle_data = pickle.loads(open(f'{encoded_path}.pickle', 'rb').read())
     img_path = os.path.join('test', args['encodings'], args['image'])
 
     img = cv.imread(img_path)
+    if max(img.shape) >= 900:
+        img = rescale_frame(img, scale = 900/max(img.shape))
     rgb = cv.cvtColor(img, cv.COLOR_BGR2RGB) #dlib needs RGB images
 
     print('Starting recognition...')
@@ -55,15 +60,15 @@ def main():
         matches = face_recognition.compare_faces(pickle_data['encodings'], encoding)
 
         if True in matches:
-           #Grab all matches in order to chose the person with more matches 
+            #Grab all matches in order to chose the person with more matches 
 
-           match_count = {}
-           match_indexes = [i for (i,match) in enumerate(matches) if match]
+            match_count = {}
+            match_indexes = [i for (i,match) in enumerate(matches) if match]
 
-           for i in match_indexes:
-               name = pickle_data['names'][i]
-               #Update nº of matches for that person
-               match_count[name] = match_count.get(name,0)+1
+            for i in match_indexes:
+                name = pickle_data['names'][i]
+                #Update nº of matches for that person
+                match_count[name] = match_count.get(name,0)+1
 
             name = max(match_count, key=match_count.get)
         names.append(name)
@@ -75,5 +80,5 @@ def main():
         cv.imshow(name.replace("_", " ").title(), img)
         cv.waitKey(0)
 
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    main()
